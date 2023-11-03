@@ -7,7 +7,9 @@
  * @author  Manuel Brandão - 38909
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class ConstraintSatisfaction {
@@ -107,11 +109,51 @@ public class ConstraintSatisfaction {
         return permutation;
     }
 
-    // Inicia o tabuleiro com zeros e chama a função solveNQueens para resolver o problema
+    /**
+     * Resolve o problema das N-rainhas com "backtracking" e armazena as soluções encontradas em uma lista.
+     *
+     * @param board O tabuleiro de xadrez
+     * @param col   A coluna atual onde se está a tentar colocar uma rainha
+     * @param solutions Uma lista para armazenar as soluções encontradas
+     */
+    static void solveNQueens(int[][] board, int col, List<int[][]> solutions) {
+        if (col == N) {
+            int[][] solution = new int[N][N];
+            for (int i = 0; i < N; i++) {
+                solution[i] = Arrays.copyOf(board[i], N);
+            }
+            solutions.add(solution);
+        }
+
+        int[] randomPermutation = getRandomPermutation(N);
+        for (int i = 0; i < N; i++) {
+            int row = randomPermutation[i];
+            if (isSafe(board, row, col)) {
+                board[row][col] = 1;
+                solveNQueens(board, col + 1, solutions);
+                board[row][col] = 0;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         int[][] board = new int[N][N];
-        if (!solveNQueens(board, 0)) {
+        List<int[][]> solutions = new ArrayList<>();
+        solveNQueens(board, 0, solutions);
+        int counter = 0;
+        if (solutions.isEmpty()) {
             System.out.println("Nenhuma solução encontrada");
+        } else {
+            System.out.println("Soluções encontradas:");
+            for (int[][] solution : solutions) {
+                counter++;
+                System.out.println(counter);
+
+                for (int[] row : solution) {
+                    System.out.println(Arrays.toString(row));
+                }
+                System.out.println();
+            }
         }
     }
 }
